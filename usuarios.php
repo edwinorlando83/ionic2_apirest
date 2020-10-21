@@ -20,46 +20,29 @@ switch ($op) {
         $select = $db->query($sql, $usu_correo, $usu_password)->fetchArray(); 
         echo json_encode($select);
         break;
-    case 'lista-usuario':    
-            $texto = $_POST['texto'];
-            $limite = $_POST['limite'];
-               $rol = $_POST['rol'];
-            
-            $slimite=" limit 20 ";
-            if( isset( $limite))
-                $slimite=" limit 20 ";
-            
-            $where=" ";
-            if( isset( $texto)){ 
-                $texto  =  strtoupper( $texto );
-                $where="  and  upper( CONCAT( correo , nombre )) like '%$texto%' ";
-            }            
-
-            $sql = "SELECT * FROM usuario  where rol= '$rol' " .$where . $slimite   ;
+    case 'lista-usuario':     
+            $sql = "SELECT * FROM usuario  "     ;
             $row = $db->query($sql)->fetchAll();
             $result = $db->getResponse($row);
-       
+            echo json_encode($result);
         break;
 
-        case 'getusuario':
-            $result = $db->getResponseAuth();
+        case 'getusuario': 
             $correo = $_POST['correo']; 
-            $sql = "SELECT * FROM usuario  where correo= '$correo' "  ;
+            $sql = "SELECT * FROM usuario  where usu_correo= '$correo' "  ;
             $row = $db->query($sql)->fetchArray();
             $result = $db->getResponse($row);         
             echo json_encode($result);
             break;
-
+        
        case 'insert-usuario':
-        $correo = $_POST['correo'];
-        $nombre = $_POST['nombre'];
-        $password = $_POST['password'];
-       
-        $rol = '1';
-        $result = $db->getResponseAuth();
-        if ($result['estado'] == 'VALIDO') {
-            $sql = ' INSERT INTO usuario ( correo,nombre,password,rol  ) VALUES(?,?,?,? );  ';
-            $insert = $db->query($sql, $correo, $nombre, $password,  $rol);
+        $usu_correo = $_POST['usu_correo'];
+        $usu_nombres = $_POST['usu_nombres'];
+        $usu_password = $_POST['usu_password'];
+        $rol_codigo = $_POST['rol_codigo'];
+ 
+            $sql = ' INSERT INTO usuario ( usu_correo,usu_nombres,usu_password,rol_codigo  ) VALUES(?,?,?,? );  ';
+            $insert = $db->query($sql, $usu_correo, $usu_nombres, $usu_password,  $rol_codigo);
             if ($db->MensajeError) {
                 echo json_encode($db->getResponse('ERROR: ' . $db->MensajeError));
                 exit;
@@ -74,18 +57,14 @@ switch ($op) {
 
             $result = $db->getResponse($mensaje);
             echo json_encode($result);
-        } else {
-            echo json_encode($result);
-        }
+         
 
         break;
 
     case 'delete-usuario':
-        $correo = $_POST['correo'];
-        $result = $db->getResponseAuth();
-        if ($result['estado'] == 'VALIDO') {
-            $sql = ' delete from  usuario  where  correo= ?  ';
-            $delete = $db->query($sql, $correo);
+        $usu_correo = $_POST['usu_correo']; 
+            $sql = ' delete from  usuario  where  usu_correo= ?  ';
+            $delete = $db->query($sql, $usu_correo);
             if ($db->MensajeError) {
                 echo json_encode($db->getResponse('ERROR: ' . $db->MensajeError));
                 exit;
@@ -100,21 +79,18 @@ switch ($op) {
 
             $result = $db->getResponse($mensaje);
             echo json_encode($result);
-        } else {
-            echo json_encode($result);
-        }
+       
 
         break;
 
     case 'update-usuario':
-        $correo = $_POST['correo'];
-        $nombre = $_POST['nombre'];
-        $password = $_POST['password'];
-        
-        $result = $db->getResponseAuth();
-        if ($result['estado'] == 'VALIDO') {
-            $sql = '  update usuario  set  nombre=?,password=?, updated=current_timestamp  where correo= ?  ';
-            $update = $db->query($sql, $nombre, $password,  $correo);
+        $usu_correo = $_POST['usu_correo'];
+        $usu_nombres = $_POST['usu_nombres'];
+        $usu_password = $_POST['usu_password'];
+        $rol_codigo = $_POST['rol_codigo'];
+     
+        $sql = '  update usuario  set  usu_nombres=?,usu_password=?, rol_codigo=?  where usu_correo= ?  ';
+        $update = $db->query($sql, $usu_nombres, $usu_password,  $rol_codigo, $usu_correo);
             if ($db->MensajeError) {
                 echo json_encode($db->getResponse('ERROR: ' . $db->MensajeError));
                 exit;
@@ -129,9 +105,7 @@ switch ($op) {
 
             $result = $db->getResponse($mensaje);
             echo json_encode($result);
-        } else {
-            echo json_encode($result);
-        }
+         
 
         break;
     default:
