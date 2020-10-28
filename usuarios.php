@@ -6,7 +6,7 @@ header('Access-Control-Allow-Methods: POST, GET, OPTIONS');
 $op = $_POST['op'];
 if (!isset($op)) {
     echo json_encode("No se definió  la variable op");
-    exit;
+   
 }
 include 'vendor/autoload.php';
 require 'utils/auth.php';
@@ -21,14 +21,14 @@ switch ($op) {
         echo json_encode($select);
         break;
     case 'lista-usuario':     
-            $sql = "SELECT * FROM usuario  "     ;
+            $sql = "SELECT * FROM usuario  "  ;
             $row = $db->query($sql)->fetchAll();
-            $result = $db->getResponse($row);
-            echo json_encode($result);
+     
+            echo json_encode($row);
         break;
 
         case 'getusuario': 
-            $correo = $_POST['correo']; 
+            $correo = $_POST['usu_correo']; 
             $sql = "SELECT * FROM usuario  where usu_correo= '$correo' "  ;
             $row = $db->query($sql)->fetchArray();
             $result = $db->getResponse($row);         
@@ -84,6 +84,12 @@ switch ($op) {
         break;
 
     case 'update-usuario':
+
+        $rawdata = file_get_contents("php://input");
+        // Let's say we got JSON
+        echo $rawdata->usu_correo;
+
+
         $usu_correo = $_POST['usu_correo'];
         $usu_nombres = $_POST['usu_nombres'];
         $usu_password = $_POST['usu_password'];
@@ -108,6 +114,14 @@ switch ($op) {
          
 
         break;
+
+        case 'lista-rol':     
+            $sql = "SELECT * FROM rol  "     ;
+            $row = $db->query($sql)->fetchAll();
+     
+            echo json_encode($row);
+        break;
+
     default:
         echo json_encode("Error no existe la opcion " . $op);
 
